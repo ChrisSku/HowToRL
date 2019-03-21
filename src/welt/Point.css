@@ -1,0 +1,36 @@
+.point {
+    display: flex;
+    font-size: 1.3rem;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+.point.blue {
+    background-color: blue;
+    color: white;
+    border-radius: 30px;
+}
+.point.green {
+    background-color: green;
+    color: black;
+}
+.point.red {
+    background-color: red;
+    color: black;
+}
+.point.black {
+    background-color: black;
+}
+
+.point p {
+    margin: auto;
+}
+
+.agent {
+    margin: auto;
+    height: 50%;
+    width: 50%;
+    border: 1px solid black;
+    background-color: gray;
+    border-radius: 20px;
+}
