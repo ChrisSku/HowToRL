@@ -28,7 +28,7 @@ const showValue = (value, isAgent, point) => {
     } else return agent(isAgent, point);
 };
 
-const singleValue = (value, isAgent) => {};
+// const singleValue = (value, isAgent) => {};
 
 const qValue = (value, isAgent, point) => {
     return (
