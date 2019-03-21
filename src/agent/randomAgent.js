@@ -13,8 +13,11 @@ class RandAgent {
     }
 
     step() {
+        const state =
+            (this.getLocation().row - 1) * 4 + this.getLocation().col - 1;
         const action = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
         this.Interactions.moveAgent(action[this.getRand()]);
+        if (state === 6 || state === 15) this.resetLocation();
     }
 
     getRand() {

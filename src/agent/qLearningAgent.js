@@ -13,7 +13,7 @@ class RandAgent {
         this.last_state = this.getState();
         this.stepSize = 0.1;
         this.dicountFaktor = 0.9;
-        this.e_greedy = null;
+        this.e_greedy = 0.1;
     }
 
     getMax(arr) {
@@ -71,7 +71,7 @@ class RandAgent {
     }
 
     eGreedy() {
-        return this.e_greedy > Math.random() ? this.greedy() : this.getRand(4);
+        return this.e_greedy < Math.random() ? this.greedy() : this.getRand(4);
     }
 
     greedy() {

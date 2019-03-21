@@ -8,7 +8,10 @@
 .point.blue {
     background-color: blue;
     color: white;
+    height: 30px;
+    width: 30px;
     border-radius: 30px;
+    margin: auto;
 }
 .point.green {
     background-color: green;

@@ -2,6 +2,10 @@ table {
     border-spacing: 0;
 }
 
+table.base {
+    margin: auto;
+}
+
 table.values {
     width: 100%;
     height: 100%;

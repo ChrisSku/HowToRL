@@ -61,7 +61,7 @@ class Gitter extends Component {
 
     render() {
         return (
-            <table tabIndex="0">
+            <table className="base">
                 <tbody>
                     {this.renderRows()}
                     <Row number={true} />
