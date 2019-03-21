@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import Row from "./Row";
 import "./Gitter.css";
 
-const cellConf = (state, agent, value, policy) => {
-    return { state: state, agent: agent, value: value, policy: policy };
+const cellConf = (state, value, policy) => {
+    return { state: state, value: value, policy: policy };
 };
 
 class Gitter extends Component {
@@ -12,31 +12,35 @@ class Gitter extends Component {
         this.state = {
             world: [
                 [
-                    cellConf("N", 0, "r"),
-                    cellConf("N", 0, "r"),
-                    cellConf("N", 0, "r"),
+                    cellConf("N", this.getTable(12), "r"),
+                    cellConf("N", this.getTable(13), "r"),
+                    cellConf("N", this.getTable(14), "r"),
                     cellConf("EP", null, null)
                 ],
                 [
-                    cellConf("N", 0, "r"),
+                    cellConf("N", this.getTable(8), "r"),
                     cellConf("W", null, null),
-                    cellConf("N", 0, "r"),
-                    cellConf("N", 0, "r")
+                    cellConf("N", this.getTable(10), "r"),
+                    cellConf("N", this.getTable(11), "r")
                 ],
                 [
-                    cellConf("N", 0, "r"),
-                    cellConf("N", 0, "r"),
+                    cellConf("N", this.getTable(4), "r"),
+                    cellConf("N", this.getTable(5), "r"),
                     cellConf("EN", null, null),
-                    cellConf("N", 0, "r")
+                    cellConf("N", this.getTable(7), "r")
                 ],
                 [
-                    cellConf("S", null, null),
-                    cellConf("N", 0, "r"),
-                    cellConf("N", 0, "r"),
-                    cellConf("N", 0, "r")
+                    cellConf("S", this.getTable(0), null),
+                    cellConf("N", this.getTable(1), "r"),
+                    cellConf("N", this.getTable(2), "r"),
+                    cellConf("N", this.getTable(3), "r")
                 ]
             ]
         };
+    }
+
+    getTable(num) {
+        return this.props.table ? this.props.table[num] : [];
     }
 
     getAgentLocation = line => {
@@ -57,7 +61,7 @@ class Gitter extends Component {
 
     render() {
         return (
-            <table tabIndex="0" onKeyDown={event => this.moveAgent(event.key)}>
+            <table tabIndex="0">
                 <tbody>
                     {this.renderRows()}
                     <Row number={true} />
