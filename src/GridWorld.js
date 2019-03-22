@@ -86,7 +86,11 @@ class GridWorld extends Component {
                     policy={this.props.agent.policy}
                     dynamic={this.dynamic}
                 />
-                <p>{`Episode: ${this.props.agent.getEpisode()}`} </p>
+                <p>
+                    {`${
+                        this.dynamic ? "Iterations " : "Episodes "
+                    }${this.props.agent.getEpisode()}`}{" "}
+                </p>
                 <button
                     className="ui button"
                     onClick={() => this.setState({ start: !this.state.start })}

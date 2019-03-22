@@ -10,6 +10,7 @@ class DynamyAgent {
             .map(() => this.actions[this.getRand(4)]);
         this.dicountFaktor = 0.9;
         this.delta = 0;
+        this.deltaMax = 0.1;
         this.reward = -1;
     }
 
@@ -35,7 +36,7 @@ class DynamyAgent {
                 this.table[index] = this.sumNextValues(index);
                 this.delta = this.calcDelta(v, this.table[index]);
             });
-        } while (this.delta > 0.5);
+        } while (this.delta > this.deltaMax);
     }
 
     policyImprovement() {
