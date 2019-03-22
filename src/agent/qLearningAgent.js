@@ -9,9 +9,10 @@ class RandAgent {
         this.getMax(this.QTable[0]);
         this.last_action = 0;
         this.last_state = this.getState();
-        this.stepSize = 0.1;
+        this.stepSize = 0.2;
         this.dicountFaktor = 0.9;
-        this.e_greedy = 0.1;
+        this.e_greedy = 0.2;
+        this.episode = 1;
     }
 
     getMax(arr) {
@@ -28,6 +29,7 @@ class RandAgent {
         return this.Interactions.getLocation();
     }
     resetLocation() {
+        this.episode++;
         this.Interactions.resetLocation();
     }
 

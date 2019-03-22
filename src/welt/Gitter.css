@@ -7,7 +7,7 @@ table {
 }
 
 .centered button {
-    margin: 11.1rem 20px;
+    margin: 11.1rem 20px !important;
 }
 
 table.base {

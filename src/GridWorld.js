@@ -15,6 +15,7 @@ class GridWorld extends Component {
     componentDidMount() {
         this._isMounted = true;
         this.updateLocation();
+        document.addEventListener("keydown", this.onKeyPressed);
     }
 
     componentDidUpdate() {
@@ -42,6 +43,23 @@ class GridWorld extends Component {
         return null;
     };
 
+    onKeyPressed = event => {
+        const keysBack = ["PageUp", "ArrowLeft", "ArrowDown", "Backspace"];
+        const keysNext = ["ArrowRight", "ArrowUp", "Enter", "PageDown"];
+        if (keysNext.indexOf(event.key) > -1) {
+            event.preventDefault();
+            this.setState({ start: true });
+        }
+        if (keysBack.indexOf(event.key) > -1) {
+            event.preventDefault();
+            this.setState({ start: false });
+        }
+        if (event.key === "Escape") {
+            window.location.reload();
+        }
+        console.log(event.key);
+    };
+
     render() {
         return (
             <div className="centered">
@@ -49,7 +67,9 @@ class GridWorld extends Component {
                     agent={this.state.agentLocation}
                     table={this.getTable()}
                 />
+                <p>{`Episode: ${this.props.agent.episode}`} </p>
                 <button
+                    className="ui button"
                     onClick={() => this.setState({ start: !this.state.start })}
                 >
                     {this.state.start ? "stop" : "start"}
