@@ -24,11 +24,24 @@ const agent = (agent, point) => {
 
 const showValue = (value, isAgent, point) => {
     if (value.length > 0) {
+        if (value.length === 1) return singleValue(value, isAgent);
         return qValue(value, isAgent, point);
     } else return agent(isAgent, point);
 };
 
-// const singleValue = (value, isAgent) => {};
+const singleValue = (value, isAgent) => {
+    return agent(
+        isAgent,
+        <div
+            className="values"
+            style={{
+                backgroundColor: getRGB(value[0])
+            }}
+        >
+            {value[0].toFixed(2)}
+        </div>
+    );
+};
 
 const qValue = (value, isAgent, point) => {
     return (

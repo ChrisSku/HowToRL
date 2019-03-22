@@ -2,6 +2,14 @@ table {
     border-spacing: 0;
 }
 
+.centered table {
+    float: left;
+}
+
+.centered button {
+    margin: 11.1rem 20px;
+}
+
 table.base {
     margin: auto;
 }

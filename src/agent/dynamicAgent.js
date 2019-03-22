@@ -1,17 +1,16 @@
 import Interactions from "./agentInteractions";
 
-class RandAgent {
+class DynamyAgent {
     constructor() {
         this.Interactions = new Interactions();
         this.actions = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
-        this.QTable = new Array(16).fill();
-        this.QTable = this.QTable.map(value => [0, 0, 0, 0]);
-        this.getMax(this.QTable[0]);
-        this.last_action = 0;
+        this.table = new Array(16).fill(0);
+        this.policy = this.last_action = 0;
         this.last_state = this.getState();
         this.stepSize = 0.1;
         this.dicountFaktor = 0.9;
         this.e_greedy = 0.1;
+        this.delta = 0;
     }
 
     getMax(arr) {
@@ -34,6 +33,21 @@ class RandAgent {
     getState() {
         const { row, col } = this.getLocation();
         return (row - 1) * 4 + col - 1;
+    }
+
+    policyEvaluation() {
+        while (this.delta > 1) {
+            const v = this.table;
+            this.table.map();
+            this.delta = this.calcDelta(v);
+        }
+    }
+
+    calcDelta(v) {
+        const deltaVek = v.map((value, index) =>
+            Math.abs(value - this.table[index])
+        );
+        return Math.max.apply(deltaVek);
     }
 
     step() {
@@ -61,7 +75,7 @@ class RandAgent {
     getReward(state) {
         if (state === 6) return -10;
         if (state === 15) return 10;
-        return -0.1;
+        return -1;
     }
 
     behaviour_policy() {
@@ -81,4 +95,4 @@ class RandAgent {
     }
 }
 
-export default RandAgent;
+export default DynamyAgent;

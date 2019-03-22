@@ -7,7 +7,8 @@ class GridWorld extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            agentLocation: this.props.agent.getLocation()
+            agentLocation: this.props.agent.getLocation(),
+            start: false
         };
     }
 
@@ -17,12 +18,13 @@ class GridWorld extends Component {
     }
 
     componentDidUpdate() {
-        setTimeout(() => {
-            if (this._isMounted) {
-                this.props.agent.step();
-                return this.updateLocation();
-            }
-        }, 50);
+        if (this.state.start)
+            setTimeout(() => {
+                if (this._isMounted) {
+                    this.props.agent.step();
+                    return this.updateLocation();
+                }
+            }, 50);
     }
 
     componentWillUnmount() {
@@ -47,6 +49,11 @@ class GridWorld extends Component {
                     agent={this.state.agentLocation}
                     table={this.getTable()}
                 />
+                <button
+                    onClick={() => this.setState({ start: !this.state.start })}
+                >
+                    {this.state.start ? "stop" : "start"}
+                </button>
             </div>
         );
     }
