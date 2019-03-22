@@ -5,12 +5,16 @@ class DynamyAgent {
         this.Interactions = new Interactions();
         this.actions = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
         this.table = new Array(16).fill(0);
-        this.policy = this.last_action = 0;
-        this.last_state = this.getState();
-        this.stepSize = 0.1;
+        this.policy = new Array(16)
+            .fill()
+            .map(() => this.actions[this.getRand(4)]);
         this.dicountFaktor = 0.9;
-        this.e_greedy = 0.1;
         this.delta = 0;
+        this.reward = -1;
+    }
+
+    getEpisode() {
+        return this.Interactions.episode;
     }
 
     getMax(arr) {
@@ -23,71 +27,86 @@ class DynamyAgent {
         return { max, argMax };
     }
 
-    getLocation() {
-        return this.Interactions.getLocation();
-    }
-    resetLocation() {
-        this.Interactions.resetLocation();
-    }
-
-    getState() {
-        const { row, col } = this.getLocation();
-        return (row - 1) * 4 + col - 1;
-    }
-
     policyEvaluation() {
-        while (this.delta > 1) {
-            const v = this.table;
-            this.table.map();
-            this.delta = this.calcDelta(v);
-        }
+        do {
+            this.delta = 0;
+            this.table.forEach((value, index) => {
+                const v = value;
+                this.table[index] = this.sumNextValues(index);
+                this.delta = this.calcDelta(v, this.table[index]);
+            });
+        } while (this.delta > 0.5);
     }
 
-    calcDelta(v) {
-        const deltaVek = v.map((value, index) =>
-            Math.abs(value - this.table[index])
+    policyImprovement() {
+        let policyStable = true;
+        this.policy.forEach((value, index) => {
+            const oldAction = value;
+            this.policy[index] = this.argMaxValues(index);
+            if (oldAction !== this.policy[index]) policyStable = false;
+        });
+        this.Interactions.episode++;
+        return policyStable;
+    }
+
+    argMaxValues(state) {
+        const row = Math.floor(state / 4) + 1;
+        const col = (state % 4) + 1;
+
+        const actionValues = this.actions.map(a => {
+            const newStates = this.Interactions.getNextState(a, row, col).map(
+                value => (value.row - 1) * 4 + value.col - 1
+            );
+
+            const updateValue = newStates.map(
+                value =>
+                    this.getReward(value) +
+                    this.dicountFaktor * this.getTableValue(value)
+            );
+            return (
+                0.8 * updateValue[0] +
+                0.1 * updateValue[1] +
+                0.1 * updateValue[2]
+            );
+        });
+
+        return this.actions[this.getMax(actionValues).argMax];
+    }
+
+    sumNextValues(state) {
+        const row = Math.floor(state / 4) + 1;
+        const col = (state % 4) + 1;
+
+        const newStates = this.Interactions.getNextState(
+            this.policy[state],
+            row,
+            col
+        ).map(value => (value.row - 1) * 4 + value.col - 1);
+        const updateValue = newStates.map(
+            value =>
+                this.getReward(value) +
+                this.dicountFaktor * this.getTableValue(value)
         );
-        return Math.max.apply(deltaVek);
+        return (
+            0.8 * updateValue[0] + 0.1 * updateValue[1] + 0.1 * updateValue[2]
+        );
     }
 
-    step() {
-        const action = this.behaviour_policy();
-        const state = this.getState();
-        this.updateQTable(action, state);
-        this.last_action = action;
-        this.last_state = state;
-        this.Interactions.moveAgent(this.actions[action]);
-        if (state === 6 || state === 15) this.resetLocation();
+    getTableValue(state) {
+        if (state === 6) return -10;
+        if (state === 15) return 10;
+        return this.table[state];
     }
 
-    updateQTable(action, state) {
-        const col = this.QTable[this.last_state];
-
-        col[this.last_action] +=
-            this.stepSize *
-            (this.getReward(state) +
-                this.dicountFaktor * this.QTable[state][action] -
-                this.QTable[this.last_state][this.last_action]);
-
-        this.QTable[this.last_state] = col;
+    calcDelta(v, t) {
+        const deltaVek = Math.abs(v - t);
+        return Math.max(this.delta, deltaVek);
     }
 
     getReward(state) {
         if (state === 6) return -10;
         if (state === 15) return 10;
-        return -1;
-    }
-
-    behaviour_policy() {
-        return this.e_greedy ? this.eGreedy() : this.greedy();
-    }
-
-    eGreedy() {
-        return this.e_greedy < Math.random() ? this.greedy() : this.getRand(4);
-    }
-
-    greedy() {
-        return this.getMax(this.QTable[this.getState()]).argMax;
+        return this.reward;
     }
 
     getRand(length) {

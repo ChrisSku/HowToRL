@@ -8,6 +8,8 @@ const points = {
     W: { text: "", color: "black" }
 };
 
+const actions = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft"];
+
 const agent = (agent, point) => {
     return agent ? (
         <div className="agent">
@@ -22,23 +24,26 @@ const agent = (agent, point) => {
     );
 };
 
-const showValue = (value, isAgent, point) => {
+const showValue = (conf, isAgent, point) => {
+    const value = conf.value;
+    if (!isNaN(value)) return singleValue(conf);
     if (value.length > 0) {
-        if (value.length === 1) return singleValue(value, isAgent);
         return qValue(value, isAgent, point);
     } else return agent(isAgent, point);
 };
 
-const singleValue = (value, isAgent) => {
-    return agent(
-        isAgent,
-        <div
-            className="values"
-            style={{
-                backgroundColor: getRGB(value[0])
-            }}
-        >
-            {value[0].toFixed(2)}
+const singleValue = (conf, isAgent) => {
+    return (
+        <div>
+            <div
+                className="values"
+                style={{
+                    backgroundColor: getRGB(conf.value)
+                }}
+            >
+                {conf.value.toFixed(2)}
+            </div>
+            {getPolicy(actions.map(value => (value === conf.policy ? 1 : 0)))}
         </div>
     );
 };
@@ -186,7 +191,7 @@ const point = (conf, isAgent) => {
         </div>
     ) : (
         <div className="point">
-            {showValue(conf.value, isAgent, points[conf.state])}
+            {showValue(conf, isAgent, points[conf.state])}
         </div>
     );
 };

@@ -1,15 +1,22 @@
 import React, { Component } from "react";
 import Gitter from "./welt/gitter";
+import DynamicAgent from "./agent/dynamicAgent";
 
 class GridWorld extends Component {
     _isMounted = false;
-
+    dynamic = this.props.agent instanceof DynamicAgent;
     constructor(props) {
         super(props);
-        this.state = {
-            agentLocation: this.props.agent.getLocation(),
-            start: false
-        };
+        this.dynamic
+            ? (this.state = {
+                  agentLocation: this.props.agent.getEpisode(),
+                  policyStable: false,
+                  start: false
+              })
+            : (this.state = {
+                  agentLocation: this.props.agent.getLocation(),
+                  start: false
+              });
     }
 
     componentDidMount() {
@@ -19,13 +26,23 @@ class GridWorld extends Component {
     }
 
     componentDidUpdate() {
-        if (this.state.start)
-            setTimeout(() => {
-                if (this._isMounted) {
+        if (this.state.start && this._isMounted)
+            if (this.dynamic) {
+                if (!this.state.policyStable)
+                    setTimeout(() => {
+                        this.runPolicyIteration();
+                    }, 1000);
+                else this.setState({ start: false });
+            } else
+                setTimeout(() => {
                     this.props.agent.step();
                     return this.updateLocation();
-                }
-            }, 50);
+                }, 50);
+    }
+
+    runPolicyIteration() {
+        this.props.agent.policyEvaluation();
+        this.setState({ policyStable: this.props.agent.policyImprovement() });
     }
 
     componentWillUnmount() {
@@ -33,13 +50,14 @@ class GridWorld extends Component {
     }
 
     updateLocation = () => {
-        this.setState({
-            agentLocation: this.props.agent.getLocation()
-        });
+        if (!this.dynamic)
+            this.setState({
+                agentLocation: this.props.agent.getLocation()
+            });
     };
 
     getTable = () => {
-        if (this.props.agent.QTable) return this.props.agent.QTable;
+        if (this.props.agent.table) return this.props.agent.table;
         return null;
     };
 
@@ -66,8 +84,10 @@ class GridWorld extends Component {
                 <Gitter
                     agent={this.state.agentLocation}
                     table={this.getTable()}
+                    policy={this.props.agent.policy}
+                    dynamic={this.dynamic}
                 />
-                <p>{`Episode: ${this.props.agent.episode}`} </p>
+                <p>{`Episode: ${this.props.agent.getEpisode()}`} </p>
                 <button
                     className="ui button"
                     onClick={() => this.setState({ start: !this.state.start })}

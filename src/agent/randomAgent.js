@@ -5,10 +5,15 @@ class RandAgent {
         this.Interactions = new Interactions();
     }
 
+    getEpisode() {
+        return this.Interactions.episode;
+    }
+
     getLocation() {
         return this.Interactions.getLocation();
     }
     resetLocation() {
+        this.Interactions.episode++;
         this.Interactions.resetLocation();
     }
 

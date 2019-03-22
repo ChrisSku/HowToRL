@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import GridWorld from "./GridWorld";
 import RandAgent from "./agent/randomAgent";
 import QAgent from "./agent/qLearningAgent";
+import DynamicAgent from "./agent/dynamicAgent";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const Navbar = probs => {
@@ -42,7 +43,7 @@ function AppRouter() {
                 />
                 <Route
                     path="/dp"
-                    component={() => GridWorldBuilder(new RandAgent())}
+                    component={() => GridWorldBuilder(new DynamicAgent())}
                 />
             </div>
         </Router>

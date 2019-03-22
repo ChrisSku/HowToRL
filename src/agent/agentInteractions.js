@@ -2,6 +2,7 @@ class Agent {
     constructor() {
         this.row = 1;
         this.col = 1;
+        this.episode = 1;
         this.actions = {
             ArrowDown: {
                 moveFirst: [-1, 0],
@@ -56,6 +57,15 @@ class Agent {
                 : this.checkblocked(row, col, moveThird);
         return action;
     };
+
+    getNextState(keyPress, row, col) {
+        const { moveFirst, moveSec, moveThird } = this.actions[keyPress];
+        return [
+            this.checkblocked(row, col, moveFirst),
+            this.checkblocked(row, col, moveSec),
+            this.checkblocked(row, col, moveThird)
+        ];
+    }
 
     checkblocked(row, col, move) {
         const nRow = row + move[0];

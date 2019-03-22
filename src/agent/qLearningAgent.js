@@ -4,15 +4,18 @@ class RandAgent {
     constructor() {
         this.Interactions = new Interactions();
         this.actions = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft"];
-        this.QTable = new Array(16).fill();
-        this.QTable = this.QTable.map(value => [0, 0, 0, 0]);
-        this.getMax(this.QTable[0]);
+        this.table = new Array(16).fill();
+        this.table = this.table.map(value => [0, 0, 0, 0]);
+        this.getMax(this.table[0]);
         this.last_action = 0;
         this.last_state = this.getState();
         this.stepSize = 0.2;
         this.dicountFaktor = 0.9;
         this.e_greedy = 0.2;
-        this.episode = 1;
+    }
+
+    getEpisode() {
+        return this.Interactions.episode;
     }
 
     getMax(arr) {
@@ -29,7 +32,7 @@ class RandAgent {
         return this.Interactions.getLocation();
     }
     resetLocation() {
-        this.episode++;
+        this.Interactions.episode++;
         this.Interactions.resetLocation();
     }
 
@@ -41,23 +44,29 @@ class RandAgent {
     step() {
         const action = this.behaviour_policy();
         const state = this.getState();
-        this.updateQTable(action, state);
+        this.updatetable(action, state);
         this.last_action = action;
         this.last_state = state;
         this.Interactions.moveAgent(this.actions[action]);
         if (state === 6 || state === 15) this.resetLocation();
     }
 
-    updateQTable(action, state) {
-        const col = this.QTable[this.last_state];
+    updatetable(action, state) {
+        const col = this.table[this.last_state];
 
         col[this.last_action] +=
             this.stepSize *
             (this.getReward(state) +
-                this.dicountFaktor * this.QTable[state][action] -
-                this.QTable[this.last_state][this.last_action]);
+                this.dicountFaktor * this.getTableValue(state, action) -
+                this.table[this.last_state][this.last_action]);
 
-        this.QTable[this.last_state] = col;
+        this.table[this.last_state] = col;
+    }
+
+    getTableValue(state, action) {
+        if (state === 6) return -10;
+        if (state === 15) return 10;
+        return this.table[state][action];
     }
 
     getReward(state) {
@@ -75,7 +84,7 @@ class RandAgent {
     }
 
     greedy() {
-        return this.getMax(this.QTable[this.getState()]).argMax;
+        return this.getMax(this.table[this.getState()]).argMax;
     }
 
     getRand(length) {

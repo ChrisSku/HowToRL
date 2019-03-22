@@ -11,30 +11,10 @@ class Gitter extends Component {
         super(props);
         this.state = {
             world: [
-                [
-                    cellConf("N", this.getTable(12), "r"),
-                    cellConf("N", this.getTable(13), "r"),
-                    cellConf("N", this.getTable(14), "r"),
-                    cellConf("EP", null, null)
-                ],
-                [
-                    cellConf("N", this.getTable(8), "r"),
-                    cellConf("W", null, null),
-                    cellConf("N", this.getTable(10), "r"),
-                    cellConf("N", this.getTable(11), "r")
-                ],
-                [
-                    cellConf("N", this.getTable(4), "r"),
-                    cellConf("N", this.getTable(5), "r"),
-                    cellConf("EN", null, null),
-                    cellConf("N", this.getTable(7), "r")
-                ],
-                [
-                    cellConf("S", this.getTable(0), null),
-                    cellConf("N", this.getTable(1), "r"),
-                    cellConf("N", this.getTable(2), "r"),
-                    cellConf("N", this.getTable(3), "r")
-                ]
+                ["N", "N", "N", "EP"],
+                ["N", "W", "N", "N"],
+                ["N", "N", "EN", "N"],
+                ["S", "N", "N", "N"]
             ]
         };
     }
@@ -43,17 +23,28 @@ class Gitter extends Component {
         return this.props.table ? this.props.table[num] : [];
     }
 
-    getAgentLocation = line => {
-        if (line === this.state.agent.row) return this.state.agent.col;
-    };
+    getPolicy(num) {
+        return this.props.policy ? this.props.policy[num] : null;
+    }
+
+    getRow(rowOfStates, num) {
+        return rowOfStates.map((state, index) =>
+            cellConf(
+                state,
+                this.getTable(num * 4 + index),
+                this.getPolicy(num * 4 + index)
+            )
+        );
+    }
 
     renderRows() {
         const { row: aRow, col: aCol } = this.props.agent;
+
         return this.state.world.map((row, index) => (
             <Row
                 key={index}
                 line={4 - index}
-                conf={row}
+                conf={this.getRow(row, 3 - index)}
                 agent={aRow === 4 - index ? aCol : null}
             />
         ));
