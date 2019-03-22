@@ -26,6 +26,7 @@ const agent = (agent, point) => {
 
 const showValue = (conf, isAgent, point) => {
     const value = conf.value;
+    if (value === "NO_VALUES") return agent(isAgent, point);
     if (!isNaN(value)) return singleValue(conf);
     if (value.length > 0) {
         return qValue(value, isAgent, point);

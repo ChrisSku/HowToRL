@@ -7,7 +7,6 @@ import DynamicAgent from "./agent/dynamicAgent";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const Navbar = probs => {
-    console.log(probs.location.pathname);
     return (
         <div className="ui secondary pointing menu">
             <Link className="item" to="/">

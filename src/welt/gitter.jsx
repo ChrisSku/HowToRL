@@ -20,7 +20,7 @@ class Gitter extends Component {
     }
 
     getTable(num) {
-        return this.props.table ? this.props.table[num] : [];
+        return this.props.table ? this.props.table[num] : "NO_VALUES";
     }
 
     getPolicy(num) {
