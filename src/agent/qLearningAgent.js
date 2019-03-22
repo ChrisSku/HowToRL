@@ -3,7 +3,7 @@ import Interactions from "./agentInteractions";
 class RandAgent {
     constructor() {
         this.Interactions = new Interactions();
-        this.actions = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
+        this.actions = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft"];
         this.QTable = new Array(16).fill();
         this.QTable = this.QTable.map(value => [0, 0, 0, 0]);
         this.getMax(this.QTable[0]);
