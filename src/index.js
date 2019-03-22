@@ -7,15 +7,19 @@ import DynamicAgent from "./agent/dynamicAgent";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const Navbar = probs => {
+    const path = probs.location.pathname;
     return (
         <div className="ui secondary pointing menu">
-            <Link className="item" to="/">
+            <Link className={`item ${path === "/" ? "active" : ""}`} to="/">
                 Random
             </Link>
-            <Link className="item" to="/q-learning">
+            <Link
+                className={`item ${path === "/q-learning" ? "active" : ""}`}
+                to="/q-learning"
+            >
                 Q-Learning
             </Link>
-            <Link className="item" to="/dp">
+            <Link className={`item ${path === "/dp" ? "active" : ""}`} to="/dp">
                 DP
             </Link>
         </div>
