@@ -88,8 +88,8 @@ class GridWorld extends Component {
                 />
                 <p>
                     {`${
-                        this.dynamic ? "Iterations " : "Episodes "
-                    }${this.props.agent.getEpisode()}`}{" "}
+                        this.dynamic ? "Iterations: " : "Episodes: "
+                    }${this.props.agent.getEpisode()}`}
                 </p>
                 <button
                     className="ui button"
