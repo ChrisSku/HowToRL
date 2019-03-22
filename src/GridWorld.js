@@ -75,6 +75,7 @@ class GridWorld extends Component {
         if (event.key === "Escape") {
             window.location.reload();
         }
+        console.log(event.key);
     };
 
     render() {
