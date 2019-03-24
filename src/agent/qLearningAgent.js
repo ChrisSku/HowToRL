@@ -43,22 +43,25 @@ class QAgent {
 
     step() {
         const action = this.behaviour_policy();
+        this.Interactions.moveAgent(this.actions[action]);
         const state = this.getState();
         this.updatetable(action, state);
         this.last_action = action;
         this.last_state = state;
-        this.Interactions.moveAgent(this.actions[action]);
         if (state === 6 || state === 15) this.resetLocation();
     }
 
     updatetable(action, state) {
         const col = this.table[this.last_state];
 
-        col[this.last_action] +=
+        col[action] +=
             this.stepSize *
             (this.getReward(state) +
-                this.dicountFaktor * this.getTableValue(state, action) -
-                this.table[this.last_state][this.last_action]);
+                this.dicountFaktor *
+                    this.getMax(
+                        this.actions.map((_, a) => this.getTableValue(state, a))
+                    ).max -
+                this.table[this.last_state][action]);
 
         this.table[this.last_state] = col;
     }
