@@ -4,6 +4,7 @@ import GridWorld from "./GridWorld";
 import RandAgent from "./agent/randomAgent";
 import QAgent from "./agent/qLearningAgent";
 import DynamicAgent from "./agent/dynamicAgent";
+import MonteCarloAgent from "./agent/monteCarloAgent";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const Navbar = probs => {
@@ -13,14 +14,17 @@ const Navbar = probs => {
             <Link className={`item ${path === "/" ? "active" : ""}`} to="/">
                 Random
             </Link>
-            <Link
-                className={`item ${path === "/q-learning" ? "active" : ""}`}
-                to="/q-learning"
-            >
-                Q-Learning
+            <Link className={`item ${path === "/td" ? "active" : ""}`} to="/td">
+                Temporal Difference
             </Link>
             <Link className={`item ${path === "/dp" ? "active" : ""}`} to="/dp">
-                DP
+                Dynamic Programming
+            </Link>
+            <Link
+                className={`item ${path === "/monte-carlo" ? "active" : ""}`}
+                to="/monte-carlo"
+            >
+                Monte Carlo
             </Link>
         </div>
     );
@@ -41,12 +45,16 @@ function AppRouter() {
                     component={() => GridWorldBuilder(new RandAgent())}
                 />
                 <Route
-                    path="/q-learning"
+                    path="/td"
                     component={() => GridWorldBuilder(new QAgent())}
                 />
                 <Route
                     path="/dp"
                     component={() => GridWorldBuilder(new DynamicAgent())}
+                />
+                <Route
+                    path="/monte-carlo"
+                    component={() => GridWorldBuilder(new MonteCarloAgent())}
                 />
             </div>
         </Router>

@@ -29,7 +29,7 @@ const showValue = (conf, isAgent, point) => {
     if (value === "NO_VALUES") return agent(isAgent, point);
     if (!isNaN(value)) return singleValue(conf);
     if (value.length > 0) {
-        return qValue(value, isAgent, point);
+        return qValue(conf, isAgent, point);
     } else return agent(isAgent, point);
 };
 
@@ -42,14 +42,20 @@ const singleValue = (conf, isAgent) => {
                     backgroundColor: getRGB(conf.value)
                 }}
             >
-                {conf.value.toFixed(2)}
+                {conf.value.toFixed(4)}
             </div>
-            {getPolicy(actions.map(value => (value === conf.policy ? 1 : 0)))}
+            {getPolicy(
+                actions.map(value => (conf.policy.indexOf(value) > -1 ? 1 : 0))
+            )}
         </div>
     );
 };
 
-const qValue = (value, isAgent, point) => {
+const qValue = (conf, isAgent, point) => {
+    const { value, policy } = conf;
+    const followPolicy = policy
+        ? actions.map(value => (conf.policy.indexOf(value) > -1 ? 1 : 0))
+        : value;
     return (
         <table className="values">
             <tbody>
@@ -63,7 +69,7 @@ const qValue = (value, isAgent, point) => {
                     >
                         {value[0].toFixed(2)}
                     </td>
-                    <td className="values">{getPolicy(value)}</td>
+                    <td className="values">{getPolicy(followPolicy)}</td>
                 </tr>
                 <tr>
                     <td
@@ -152,6 +158,8 @@ const getPolicy = valueArr => {
                 src="images\DoubleArrow.png"
                 alt="arrow"
                 style={{
+                    width: "15px",
+                    height: "15px",
                     WebkitTransform: `rotate(${rot(val)}deg)`,
                     transform: `rotate(${rot(val)}deg)`
                 }}
@@ -168,6 +176,8 @@ const getPolicy = valueArr => {
                 src="images\TripleArrow.png"
                 alt="arrow"
                 style={{
+                    width: "15px",
+                    height: "15px",
                     WebkitTransform: `rotate(${val[0] * 90 + 90}deg)`,
                     transform: `rotate(${val[0] * 90 + 90}deg)`
                 }}
@@ -175,7 +185,16 @@ const getPolicy = valueArr => {
         );
     }
     if (argMaxValues.length === 4) {
-        return <img src="images\QuadArrow.png" alt="arrow" />;
+        return (
+            <img
+                src="images\QuadArrow.png"
+                alt="arrow"
+                style={{
+                    width: "15px",
+                    height: "15px"
+                }}
+            />
+        );
     }
 };
 

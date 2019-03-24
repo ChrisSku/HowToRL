@@ -3,15 +3,17 @@ import Interactions from "./agentInteractions";
 class DynamyAgent {
     constructor() {
         this.Interactions = new Interactions();
+        this.Interactions.episode = 0;
         this.actions = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
         this.table = new Array(16).fill(0);
         this.policy = new Array(16)
             .fill()
-            .map(() => this.actions[this.getRand(4)]);
+            .map(() => [this.actions[this.getRand(4)]]);
         this.dicountFaktor = 0.9;
         this.delta = 0;
         this.deltaMax = 0.1;
         this.reward = -1;
+        this.policyStable = false;
     }
 
     getEpisode() {
@@ -23,9 +25,17 @@ class DynamyAgent {
         const argMaxValues = arr
             .map((value, index) => (value === max ? index : null))
             .filter(value => value !== null);
-        const argMax = argMaxValues[this.getRand(argMaxValues.length)];
 
-        return { max, argMax };
+        return { max, argMaxValues };
+    }
+
+    oneStepEvaluation() {
+        this.delta = 0;
+        this.table.forEach((value, index) => {
+            const v = value;
+            this.table[index] = this.sumNextValues(index);
+            this.delta = this.calcDelta(v, this.table[index]);
+        });
     }
 
     policyEvaluation() {
@@ -44,10 +54,11 @@ class DynamyAgent {
         this.policy.forEach((value, index) => {
             const oldAction = value;
             this.policy[index] = this.argMaxValues(index);
-            if (oldAction !== this.policy[index]) policyStable = false;
+            if (oldAction.filter(val => !this.policy[index].includes(val))[0])
+                policyStable = false;
         });
         this.Interactions.episode++;
-        return policyStable;
+        this.policyStable = policyStable;
     }
 
     argMaxValues(state) {
@@ -70,8 +81,9 @@ class DynamyAgent {
                 0.1 * updateValue[2]
             );
         });
-
-        return this.actions[this.getMax(actionValues).argMax];
+        return this.getMax(actionValues).argMaxValues.map(
+            value => this.actions[value]
+        );
     }
 
     sumNextValues(state) {
@@ -79,7 +91,7 @@ class DynamyAgent {
         const col = (state % 4) + 1;
 
         const newStates = this.Interactions.getNextState(
-            this.policy[state],
+            this.policy[state][this.getRand(this.policy[state].length)],
             row,
             col
         ).map(value => (value.row - 1) * 4 + value.col - 1);
@@ -94,6 +106,7 @@ class DynamyAgent {
     }
 
     getTableValue(state) {
+        if (state === 9) return 0;
         if (state === 6) return -10;
         if (state === 15) return 10;
         return this.table[state];

@@ -76,6 +76,7 @@ class Agent {
             0 < nCol &&
             nCol < 5 &&
             !(nRow === 3 && nCol === 2)
+            // &&!(nRow === 2 && nCol === 3)
         ) {
             return { row: nRow, col: nCol };
         }

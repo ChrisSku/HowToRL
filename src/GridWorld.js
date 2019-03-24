@@ -1,17 +1,21 @@
 import React, { Component } from "react";
 import Gitter from "./welt/gitter";
 import DynamicAgent from "./agent/dynamicAgent";
+import MonteCarloAgent from "./agent/monteCarloAgent";
 
 class GridWorld extends Component {
     _isMounted = false;
+    wait = true;
     dynamic = this.props.agent instanceof DynamicAgent;
+    monteCarlo = this.props.agent instanceof MonteCarloAgent;
     constructor(props) {
         super(props);
         this.dynamic
             ? (this.state = {
                   agentLocation: this.props.agent.getEpisode(),
-                  policyStable: false,
-                  start: false
+                  policyStable: this.props.agent.policyStable,
+                  start: false,
+                  wait: this.wait
               })
             : (this.state = {
                   agentLocation: this.props.agent.getLocation(),
@@ -26,13 +30,14 @@ class GridWorld extends Component {
     }
 
     componentDidUpdate() {
-        if (this.state.start && this._isMounted)
+        if (this.state.start && this._isMounted && this.wait)
             if (this.dynamic) {
                 if (!this.state.policyStable)
                     setTimeout(() => {
-                        this.runPolicyIteration();
-                    }, 1000);
+                        this.runPolicyEvaluationStep();
+                    }, 500);
                 else this.setState({ start: false });
+            } else if (this.monteCarlo) {
             } else
                 setTimeout(() => {
                     this.props.agent.step();
@@ -40,9 +45,27 @@ class GridWorld extends Component {
                 }, 50);
     }
 
+    runPolicyEvaluationStep() {
+        if (this.state.start) this.runPolicyIteration();
+        else {
+            this.props.agent.oneStepEvaluation();
+            this.setState({
+                policyStable: this.props.agent.policyStable
+            });
+        }
+    }
+
     runPolicyIteration() {
+        this.wait = false;
         this.props.agent.policyEvaluation();
-        this.setState({ policyStable: this.props.agent.policyImprovement() });
+        this.props.agent.policyImprovement();
+        this.setState({
+            policyStable: this.props.agent.policyStable
+        });
+        this.wait = true;
+        setTimeout(() => {
+            this.setState({ wait: this.wait });
+        }, 500);
     }
 
     componentWillUnmount() {

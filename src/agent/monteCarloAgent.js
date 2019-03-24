@@ -1,12 +1,15 @@
 import Interactions from "./agentInteractions";
 
-class QAgent {
+class MonteCarloAgent {
     constructor() {
         this.Interactions = new Interactions();
         this.actions = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft"];
         this.table = new Array(16).fill();
-        this.table = this.table.map(value => [0, 0, 0, 0]);
-        this.getMax(this.table[0]);
+        this.table = this.table.map(() => [0, 0, 0, 0]);
+        this.policy = new Array(16).fill().map(() => this.actions);
+        this.returns = this.table;
+        this.G = 0;
+        this.steps = 10;
         this.last_action = 0;
         this.last_state = this.getState();
         this.stepSize = 0.2;
@@ -92,4 +95,4 @@ class QAgent {
     }
 }
 
-export default QAgent;
+export default MonteCarloAgent;
